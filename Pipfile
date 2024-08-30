@@ -10,6 +10,7 @@ ipykernel = "*"
 numpy = "*"
 ipympl = "*"
 ipywidgets = "*"
+pytest = "*"
 
 [dev-packages]
 
