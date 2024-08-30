@@ -9,6 +9,7 @@ jupyterlab = "*"
 ipykernel = "*"
 numpy = "*"
 ipympl = "*"
+ipywidgets = "*"
 
 [dev-packages]
 
