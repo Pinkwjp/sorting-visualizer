@@ -1,7 +1,7 @@
 from typing import Callable, Generator, List, Dict, Tuple
 
 
-def bubble_sort(A: List[int]) -> Generator:
+def gen_bubble_sort(A: List[int]) -> Generator:
     A = list(A)
     n = len(A)
     swapped = False
