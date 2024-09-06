@@ -108,4 +108,7 @@ def endless_gen_sort_decorator(f: Callable):
     return wrapper
 
 
-
+endless_bubble_sort = endless_gen_sort_decorator(gen_bubble_sort)
+endless_insertion_sort = endless_gen_sort_decorator(gen_insertion_sort)
+endless_merge_sort = endless_gen_sort_decorator(gen_merge_sort)
+endlell_quick_sort = endless_gen_sort_decorator(gen_quicksort)
