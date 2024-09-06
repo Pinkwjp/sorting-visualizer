@@ -5,7 +5,16 @@ from itertools import repeat, chain
 from typing import Callable, Generator, List, Dict, Tuple
 
 
+def endless_gen_sort_decorator(f: Callable):
+    """decorate sort func to keep yielding the final sorted nums at the end"""
+    @functools.wraps(f)
+    def wrapper(*args, **kwds):
+        return chain(f(*args, **kwds), 
+                     repeat(sorted(*args, **kwds)))
+    return wrapper
 
+
+@endless_gen_sort_decorator
 def gen_bubble_sort(A: List[int]) -> Generator:
     A = list(A)
     n = len(A)
@@ -21,6 +30,7 @@ def gen_bubble_sort(A: List[int]) -> Generator:
             break
 
 
+@endless_gen_sort_decorator
 def gen_insertion_sort(A: List[int]) -> Generator:
     """basic insertion sort"""
     A = list(A)
@@ -33,6 +43,7 @@ def gen_insertion_sort(A: List[int]) -> Generator:
             yield A
 
 
+@endless_gen_sort_decorator
 def gen_merge_sort(A: List[int]) -> Generator:
     A = list(A)
     n = len(A)
@@ -72,6 +83,7 @@ def _merge(A: List[int], B: List[int]) -> List[int]:
     return combined
 
 
+@endless_gen_sort_decorator
 def gen_quicksort(A: List[int]) -> Generator:
     A = list(A)
     partition_points: Dict[Tuple[int, int], int] = {}
@@ -99,16 +111,3 @@ def gen_quicksort(A: List[int]) -> Generator:
     yield from gen_recur(A, 0, len(A) - 1)
 
 
-def endless_gen_sort_decorator(f: Callable):
-    """decorate sort func to keep yielding the final sorted nums at the end"""
-    @functools.wraps(f)
-    def wrapper(*args, **kwds):
-        return chain(f(*args, **kwds), 
-                     repeat(sorted(*args, **kwds)))
-    return wrapper
-
-
-endless_bubble_sort = endless_gen_sort_decorator(gen_bubble_sort)
-endless_insertion_sort = endless_gen_sort_decorator(gen_insertion_sort)
-endless_merge_sort = endless_gen_sort_decorator(gen_merge_sort)
-endlell_quick_sort = endless_gen_sort_decorator(gen_quicksort)
