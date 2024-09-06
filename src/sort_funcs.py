@@ -95,7 +95,7 @@ def gen_quicksort(A: List[int]) -> Generator:
 
 
 def sorting_algorithms() -> List[Callable]:
-    return [bubble_sort, 
+    return [gen_bubble_sort, 
             gen_insertion_sort, 
             gen_merge_sort, 
             gen_quicksort]
