@@ -6,16 +6,6 @@ from typing import Callable, Generator, List, Dict, Tuple
 
 
 
-def endless_gen_sort_decorator(f: Callable):
-    """decorate sort func to keep yielding the final sorted nums at the end"""
-    @functools.wraps(f)
-    def wrapper(*args, **kwds):
-        return chain(f(*args, **kwds), 
-                     repeat(sorted(*args, **kwds)))
-    return wrapper
-
-
-
 def gen_bubble_sort(A: List[int]) -> Generator:
     A = list(A)
     n = len(A)
@@ -109,9 +99,13 @@ def gen_quicksort(A: List[int]) -> Generator:
     yield from gen_recur(A, 0, len(A) - 1)
 
 
-def sorting_algorithms() -> List[Callable]:
-    return [gen_bubble_sort, 
-            gen_insertion_sort, 
-            gen_merge_sort, 
-            gen_quicksort]
+def endless_gen_sort_decorator(f: Callable):
+    """decorate sort func to keep yielding the final sorted nums at the end"""
+    @functools.wraps(f)
+    def wrapper(*args, **kwds):
+        return chain(f(*args, **kwds), 
+                     repeat(sorted(*args, **kwds)))
+    return wrapper
+
+
 
