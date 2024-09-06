@@ -14,23 +14,23 @@ def endless_gen_sort_decorator(f: Callable):
     return wrapper
 
 
-@endless_gen_sort_decorator
+# @endless_gen_sort_decorator
 def gen_bubble_sort(A: List[int]) -> Generator:
     A = list(A)
+    yield A 
     n = len(A)
     swapped = False
     for _ in range(n-1):
         for i in range(n-1):
-            yield A 
             if A[i] > A[i+1]:
                 A[i], A[i+1] = A[i+1], A[i]
                 yield A
                 swapped = True
         if not swapped:
             break
+ 
 
-
-@endless_gen_sort_decorator
+# @endless_gen_sort_decorator
 def gen_insertion_sort(A: List[int]) -> Generator:
     """basic insertion sort"""
     A = list(A)
@@ -43,7 +43,7 @@ def gen_insertion_sort(A: List[int]) -> Generator:
             yield A
 
 
-@endless_gen_sort_decorator
+# @endless_gen_sort_decorator
 def gen_merge_sort(A: List[int]) -> Generator:
     A = list(A)
     n = len(A)
@@ -83,7 +83,7 @@ def _merge(A: List[int], B: List[int]) -> List[int]:
     return combined
 
 
-@endless_gen_sort_decorator
+# @endless_gen_sort_decorator
 def gen_quicksort(A: List[int]) -> Generator:
     A = list(A)
     partition_points: Dict[Tuple[int, int], int] = {}
