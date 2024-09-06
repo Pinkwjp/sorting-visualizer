@@ -1,4 +1,19 @@
+
+
+import functools
+from itertools import repeat, chain
 from typing import Callable, Generator, List, Dict, Tuple
+
+
+
+def endless_gen_sort_decorator(f: Callable):
+    """decorate sort func to keep yielding the final sorted nums at the end"""
+    @functools.wraps(f)
+    def wrapper(*args, **kwds):
+        return chain(f(*args, **kwds), 
+                     repeat(sorted(*args, **kwds)))
+    return wrapper
+
 
 
 def gen_bubble_sort(A: List[int]) -> Generator:
@@ -99,3 +114,4 @@ def sorting_algorithms() -> List[Callable]:
             gen_insertion_sort, 
             gen_merge_sort, 
             gen_quicksort]
+
