@@ -1,5 +1,5 @@
 
-
+from copy import deepcopy
 from typing import Generator, List, Dict, Tuple
 
 
@@ -30,6 +30,7 @@ def gen_insertion_sort(A: List[int]) -> Generator:
             yield A
 
 
+
 def gen_merge_sort(A: List[int]) -> Generator:
     A = list(A)
     n = len(A)
@@ -41,12 +42,17 @@ def gen_merge_sort(A: List[int]) -> Generator:
             start = i
             middle = i+sublist_length
             end = min(i+2*sublist_length, n)
+            before_merge = deepcopy(A[start:end])
             sublist_1 = A[start:middle]
             sublist_2 = A[middle:end]
             combined_sorted = _merge(sublist_1, sublist_2)
             # update corresponding part of original list
             A[start:end] = combined_sorted
-            yield A
+            # check if swap happened
+            for a, b in zip(before_merge, combined_sorted):
+                if a != b:  
+                    yield A 
+                    break
         sublist_length *= 2 
 
 
@@ -118,9 +124,9 @@ def k_gen_quicksort(A: List[int]) -> Generator:
         partition_points[(low, high)] = i+1
 
     def gen_recur(A: List[int], low, high) -> Generator:
-        if low == 0 and high == len(A) -1:  # yield the initial sequence, just once
+        if low == 0 and high == len(A) -1:  # yield initial sequence
             yield A
-            
+
         if low < high:
             yield from gen_partition(A, low, high)
             p = partition_points[((low, high))]
