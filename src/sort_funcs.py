@@ -5,13 +5,13 @@ from itertools import repeat, chain
 from typing import Callable, Generator, List, Dict, Tuple
 
 
-def endless_gen_sort_decorator(f: Callable):
-    """decorate sort func to keep yielding the final sorted nums at the end"""
-    @functools.wraps(f)
-    def wrapper(*args, **kwds):
-        return chain(f(*args, **kwds), 
-                     repeat(sorted(*args, **kwds)))
-    return wrapper
+# def endless_gen_sort_decorator(f: Callable):
+#     """decorate sort func to keep yielding the final sorted nums at the end"""
+#     @functools.wraps(f)
+#     def wrapper(*args, **kwds):
+#         return chain(f(*args, **kwds), 
+#                      repeat(sorted(*args, **kwds)))
+#     return wrapper
 
 
 # @endless_gen_sort_decorator
@@ -84,6 +84,7 @@ def _merge(A: List[int], B: List[int]) -> List[int]:
 
 
 # @endless_gen_sort_decorator
+# FIXME: too much yield
 def gen_quicksort(A: List[int]) -> Generator:
     A = list(A)
     partition_points: Dict[Tuple[int, int], int] = {}
@@ -109,5 +110,43 @@ def gen_quicksort(A: List[int]) -> Generator:
             yield from gen_recur(A, p+1, high)
 
     yield from gen_recur(A, 0, len(A) - 1)
+
+
+from itertools import chain
+
+
+def x_gen_quicksort(A: List[int]) -> Generator:
+    A = list(A)
+    partition_points: Dict[Tuple[int, int], int] = {}
+
+    def gen_partition(A: List[int], low, high) -> Generator:
+        # yield A
+        pivot = A[high]
+        i = low - 1
+        for j in range(low, high):
+            if A[j] <= pivot:
+                i += 1
+                A[i], A[j] = A[j], A[i]
+                yield A 
+        A[i+1], A[high] = A[high], A[i+1]
+        yield A
+        partition_points[(low, high)] = i+1
+
+    def gen_recur(A: List[int], low, high) -> Generator:
+        if low < high:
+            yield from gen_partition(A, low, high)
+            p = partition_points[((low, high))]
+            yield from gen_recur(A, low, p-1)
+            yield from gen_recur(A, p+1, high)
+    
+    # TODO: put this in a decorator to filter repeated sequences
+    yield A
+    unique_results = set(tuple(A))
+    for a in gen_recur(A, 0, len(A) - 1):
+        if tuple(a) not in unique_results:
+            unique_results.add(tuple(a))
+            yield a
+
+
 
 
