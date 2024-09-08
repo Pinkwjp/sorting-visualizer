@@ -75,6 +75,77 @@ def _merge(A: List[int], B: List[int]) -> List[int]:
     return combined
 
 
+def x_gen_merge_sort(A: List[int]) -> Generator:
+    A = list(A)
+    n = len(A)
+    yield A 
+    sublist_length = 1 
+    while sublist_length <= n:
+        # merge all pairs of two sublist of size lenght
+        for i in range(0, n, 2*sublist_length): 
+            start = i
+            middle = i+sublist_length
+            end = min(i+2*sublist_length, n)
+            # before_merge = deepcopy(A[start:end])
+            sublist_1 = A[start:middle]
+            sublist_2 = A[middle:end]
+            
+            partial_sequences = list(x_merge(sublist_1, sublist_2))
+            for seq in partial_sequences:
+                A = deepcopy(A)
+                A[start:end] = seq
+                yield A
+
+            # for seq in x_merge(sublist_1, sublist_2):
+            #     full_sequence = deepcopy(A)
+            #     full_sequence[start:end] = seq
+            #     yield full_sequence
+            
+
+            # A[start:end] = partial_sequences[-1]  # or A = full_sequence
+
+            # combined_sorted = merged_sequences[-1]
+            # combined_sorted = _merge(sublist_1, sublist_2)
+            # # update corresponding part of original list
+            # A[start:end] = combined_sorted
+            # # check if swap happened
+            # for a, b in zip(before_merge, combined_sorted):
+            #     if a != b:  
+            #         yield A 
+            #         break
+        sublist_length *= 2 
+
+
+
+def x_merge(A: List[int], B: List[int]) -> Generator:
+    """merge two sorted lists"""
+    # large to small
+    A = list(reversed(A)) 
+    B = list(reversed(B))
+    combined: List[int] = [] # small to large
+    while A and B:
+        a = A.pop()
+        b = B.pop()
+        if a <= b:
+            combined.append(a)
+            B.append(b)
+        else:
+            combined.append(b)
+            A.append(a)
+            yield  list(combined 
+                        + list(reversed(A)) 
+                        + list(reversed(B)))  # position change, yield sequence
+    # if A:
+
+
+    # leftover = A if A else B
+    # if leftover:
+    #     combined.extend(reversed(leftover))
+    # if not str(combined) == str(yielded_sequence):
+    #     yield combined
+
+
+
 # FIXME: too much yield
 def gen_quicksort(A: List[int]) -> Generator:
     A = list(A)
