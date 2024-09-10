@@ -75,8 +75,11 @@ def _merge(A: List[int], B: List[int]) -> List[int]:
     return combined
 
 
+
+
 def x_gen_merge_sort(A: List[int]) -> Generator:
     A = list(A)
+    sorted_A = sorted(A)
     n = len(A)
     yield A 
     sublist_length = 1 
@@ -86,35 +89,22 @@ def x_gen_merge_sort(A: List[int]) -> Generator:
             start = i
             middle = i+sublist_length
             end = min(i+2*sublist_length, n)
-            # before_merge = deepcopy(A[start:end])
+
             sublist_1 = A[start:middle]
             sublist_2 = A[middle:end]
-            
-            partial_sequences = list(x_merge(sublist_1, sublist_2))
-            for seq in partial_sequences:
-                A = deepcopy(A)
-                A[start:end] = seq
-                yield A
 
-            # for seq in x_merge(sublist_1, sublist_2):
-            #     full_sequence = deepcopy(A)
-            #     full_sequence[start:end] = seq
-            #     yield full_sequence
-            
+            partial_sequence = deepcopy(A[start:end])
+            full_sequence = deepcopy(A)
 
-            # A[start:end] = partial_sequences[-1]  # or A = full_sequence
-
-            # combined_sorted = merged_sequences[-1]
-            # combined_sorted = _merge(sublist_1, sublist_2)
-            # # update corresponding part of original list
-            # A[start:end] = combined_sorted
-            # # check if swap happened
-            # for a, b in zip(before_merge, combined_sorted):
-            #     if a != b:  
-            #         yield A 
-            #         break
+            for sequence in x_merge(sublist_1, sublist_2):
+                for a, b in zip(sequence, partial_sequence):
+                    if a != b:       
+                        partial_sequence = sequence
+                        full_sequence[start:end] = sequence
+                        yield full_sequence
+                        break
+            A[start:end] = partial_sequence
         sublist_length *= 2 
-
 
 
 def x_merge(A: List[int], B: List[int]) -> Generator:
@@ -129,20 +119,43 @@ def x_merge(A: List[int], B: List[int]) -> Generator:
         if a <= b:
             combined.append(a)
             B.append(b)
+            if B and (not A):
+                yield list(combined + list(reversed(B)))
         else:
             combined.append(b)
             A.append(a)
             yield  list(combined 
                         + list(reversed(A)) 
                         + list(reversed(B)))  # position change, yield sequence
-    # if A:
 
 
-    # leftover = A if A else B
-    # if leftover:
-    #     combined.extend(reversed(leftover))
-    # if not str(combined) == str(yielded_sequence):
-    #     yield combined
+def xx_merge(A: List[int], B: List[int]) -> List[List[int]]:
+    """merge two sorted lists"""
+    # large to small
+    A = list(reversed(A)) 
+    B = list(reversed(B))
+    combined: List[int] = [] # small to large
+    partial_sequences = []
+    while A and B:
+        a = A.pop()
+        b = B.pop()
+        if a <= b:
+            combined.append(a)
+            B.append(b)
+            # if B and (not A):
+            #     yield list(combined + list(reversed(B)))
+        else:
+            combined.append(b)
+            A.append(a)
+            partial_sequences.append(list(combined 
+                                          + list(reversed(A)) 
+                                          + list(reversed(B))))
+            # yield  list(combined 
+            #             + list(reversed(A)) 
+            #             + list(reversed(B)))  # position change, yield sequence
+    return partial_sequences
+
+
 
 
 
