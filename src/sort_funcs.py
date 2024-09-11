@@ -77,7 +77,8 @@ def _merge(A: List[int], B: List[int]) -> List[int]:
 
 
 
-def x_gen_merge_sort(A: List[int]) -> Generator:
+def gen_merge_sort_with_more_yield(A: List[int]) -> Generator:
+    """yield more partially sorted sequences"""
     A = list(A)
     sorted_A = sorted(A)
     n = len(A)
@@ -96,7 +97,7 @@ def x_gen_merge_sort(A: List[int]) -> Generator:
             partial_sequence = deepcopy(A[start:end])
             full_sequence = deepcopy(A)
 
-            for sequence in x_merge(sublist_1, sublist_2):
+            for sequence in _merge_with_more_yield(sublist_1, sublist_2):
                 for a, b in zip(sequence, partial_sequence):
                     if a != b:       
                         partial_sequence = sequence
@@ -107,15 +108,16 @@ def x_gen_merge_sort(A: List[int]) -> Generator:
         sublist_length *= 2 
 
 
-def x_merge(A: List[int], B: List[int]) -> Generator:
-    """merge two sorted lists"""
-    # large to small
-    A = list(reversed(A)) 
+def _merge_with_more_yield(A: List[int], B: List[int]) -> Generator:
+    """merge two sorted lists, yield more partially sorted sequences"""
+    # reverse from large to small for pop
+    A = list(reversed(A))  
     B = list(reversed(B))
     combined: List[int] = [] # small to large
     while A and B:
         a = A.pop()
         b = B.pop()
+        # pick the smaller one 
         if a <= b:
             combined.append(a)
             B.append(b)
@@ -124,37 +126,10 @@ def x_merge(A: List[int], B: List[int]) -> Generator:
         else:
             combined.append(b)
             A.append(a)
+            # yield every partially sorted sequence
             yield  list(combined 
                         + list(reversed(A)) 
-                        + list(reversed(B)))  # position change, yield sequence
-
-
-def xx_merge(A: List[int], B: List[int]) -> List[List[int]]:
-    """merge two sorted lists"""
-    # large to small
-    A = list(reversed(A)) 
-    B = list(reversed(B))
-    combined: List[int] = [] # small to large
-    partial_sequences = []
-    while A and B:
-        a = A.pop()
-        b = B.pop()
-        if a <= b:
-            combined.append(a)
-            B.append(b)
-            # if B and (not A):
-            #     yield list(combined + list(reversed(B)))
-        else:
-            combined.append(b)
-            A.append(a)
-            partial_sequences.append(list(combined 
-                                          + list(reversed(A)) 
-                                          + list(reversed(B))))
-            # yield  list(combined 
-            #             + list(reversed(A)) 
-            #             + list(reversed(B)))  # position change, yield sequence
-    return partial_sequences
-
+                        + list(reversed(B))) 
 
 
 
