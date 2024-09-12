@@ -16,6 +16,7 @@ def gen_bubble_sort(A: List[int]) -> Generator:
                 swapped = True
         if not swapped:
             break
+    yield A  # yield the sorted sequence one more time
  
 
 
@@ -29,6 +30,7 @@ def gen_insertion_sort(A: List[int]) -> Generator:
             A[j-1], A[j] = A[j], A[j-1]
             j -= 1
             yield A
+    yield A  # yield the sorted sequence one more time
 
 
 
@@ -55,6 +57,7 @@ def gen_merge_sort(A: List[int]) -> Generator:
                     yield A 
                     break
         sublist_length *= 2 
+    yield A  # yield the sorted sequence one more time
 
 
 def _merge(A: List[int], B: List[int]) -> List[int]:
@@ -106,7 +109,7 @@ def gen_merge_sort_with_more_yields(A: List[int]) -> Generator:
                         break
             A[start:end] = partial_sequence
         sublist_length *= 2 
-    yield sorted_A
+    yield A  # yield the sorted sequence one more time
 
 
 def _merge_with_more_yields(A: List[int], B: List[int]) -> Generator:
@@ -134,37 +137,7 @@ def _merge_with_more_yields(A: List[int], B: List[int]) -> Generator:
 
 
 
-
-# FIXME: too much yield
 def gen_quicksort(A: List[int]) -> Generator:
-    A = list(A)
-    partition_points: Dict[Tuple[int, int], int] = {}
-
-    def gen_partition(A: List[int], low, high) -> Generator:
-        yield A
-        pivot = A[high]
-        i = low - 1
-        for j in range(low, high):
-            if A[j] <= pivot:
-                i += 1
-                A[i], A[j] = A[j], A[i]
-                yield A 
-        A[i+1], A[high] = A[high], A[i+1]
-        yield A
-        partition_points[(low, high)] = i+1
-
-    def gen_recur(A: List[int], low, high) -> Generator:
-        if low < high:
-            yield from gen_partition(A, low, high)
-            p = partition_points[((low, high))]
-            yield from gen_recur(A, low, p-1)
-            yield from gen_recur(A, p+1, high)
-
-    yield from gen_recur(A, 0, len(A) - 1)
-
-
-
-def k_gen_quicksort(A: List[int]) -> Generator:
     A = list(A)
     partition_points: Dict[Tuple[int, int], int] = {}
 
@@ -176,10 +149,10 @@ def k_gen_quicksort(A: List[int]) -> Generator:
             if A[j] <= pivot:
                 i += 1
                 A[i], A[j] = A[j], A[i]
-                if A[i] != A[j]:  # reduce duplicate yield
+                if A[i] != A[j]:  # yield when 2 different elements swap
                     yield A 
         A[i+1], A[high] = A[high], A[i+1]
-        if A[i+1] != A[high]:  # reduce duplicate yield
+        if A[i+1] != A[high]:  # yield when 2 different elements swap
             yield A
         partition_points[(low, high)] = i+1
 
@@ -194,42 +167,42 @@ def k_gen_quicksort(A: List[int]) -> Generator:
             yield from gen_recur(A, p+1, high)
 
     yield from gen_recur(A, 0, len(A) - 1)
+    yield A  # yield the sorted sequence one more time
 
 
 
 
+# def x_gen_quicksort(A: List[int]) -> Generator:
+#     A = list(A)
+#     partition_points: Dict[Tuple[int, int], int] = {}
 
-def x_gen_quicksort(A: List[int]) -> Generator:
-    A = list(A)
-    partition_points: Dict[Tuple[int, int], int] = {}
+#     def gen_partition(A: List[int], low, high) -> Generator:
+#         # yield A
+#         pivot = A[high]
+#         i = low - 1
+#         for j in range(low, high):
+#             if A[j] <= pivot:
+#                 i += 1
+#                 A[i], A[j] = A[j], A[i]
+#                 yield A 
+#         A[i+1], A[high] = A[high], A[i+1]
+#         yield A
+#         partition_points[(low, high)] = i+1
 
-    def gen_partition(A: List[int], low, high) -> Generator:
-        # yield A
-        pivot = A[high]
-        i = low - 1
-        for j in range(low, high):
-            if A[j] <= pivot:
-                i += 1
-                A[i], A[j] = A[j], A[i]
-                yield A 
-        A[i+1], A[high] = A[high], A[i+1]
-        yield A
-        partition_points[(low, high)] = i+1
-
-    def gen_recur(A: List[int], low, high) -> Generator:
-        if low < high:
-            yield from gen_partition(A, low, high)
-            p = partition_points[((low, high))]
-            yield from gen_recur(A, low, p-1)
-            yield from gen_recur(A, p+1, high)
+#     def gen_recur(A: List[int], low, high) -> Generator:
+#         if low < high:
+#             yield from gen_partition(A, low, high)
+#             p = partition_points[((low, high))]
+#             yield from gen_recur(A, low, p-1)
+#             yield from gen_recur(A, p+1, high)
     
-    # TODO: put this in a decorator to filter repeated sequences
-    yield A
-    unique_results = set(tuple(A))
-    for a in gen_recur(A, 0, len(A) - 1):
-        if tuple(a) not in unique_results:
-            unique_results.add(tuple(a))
-            yield a
+#     # TODO: put this in a decorator to filter repeated sequences
+#     yield A
+#     unique_results = set(tuple(A))
+#     for a in gen_recur(A, 0, len(A) - 1):
+#         if tuple(a) not in unique_results:
+#             unique_results.add(tuple(a))
+#             yield a
 
 
 
