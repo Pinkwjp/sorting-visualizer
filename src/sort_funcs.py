@@ -1,9 +1,25 @@
 
 from copy import deepcopy
-from typing import Generator, List, Dict, Tuple
+from typing import Generator, List, Dict, Tuple, Callable, Iterator
 
 
-def gen_bubble_sort(A: List[int]) -> Generator:
+# def gen_bubble_sort(A: List[int]) -> Generator:
+#     A = list(A)
+#     yield A 
+#     n = len(A)
+#     swapped = False
+#     for _ in range(n-1):
+#         for i in range(n-1):
+#             if A[i] > A[i+1]:
+#                 A[i], A[i+1] = A[i+1], A[i]
+#                 yield A
+#                 swapped = True
+#         if not swapped:
+#             break
+#     yield A  # yield the sorted sequence one more time
+
+
+def bubble_sort(A: List[int]) -> Generator:
     A = list(A)
     yield A 
     n = len(A)
@@ -17,7 +33,6 @@ def gen_bubble_sort(A: List[int]) -> Generator:
         if not swapped:
             break
     yield A  # yield the sorted sequence one more time
- 
 
 
 def gen_insertion_sort(A: List[int]) -> Generator:
@@ -171,39 +186,29 @@ def gen_quicksort(A: List[int]) -> Generator:
 
 
 
+from functools import partial
 
-# def x_gen_quicksort(A: List[int]) -> Generator:
-#     A = list(A)
-#     partition_points: Dict[Tuple[int, int], int] = {}
 
-#     def gen_partition(A: List[int], low, high) -> Generator:
-#         # yield A
-#         pivot = A[high]
-#         i = low - 1
-#         for j in range(low, high):
-#             if A[j] <= pivot:
-#                 i += 1
-#                 A[i], A[j] = A[j], A[i]
-#                 yield A 
-#         A[i+1], A[high] = A[high], A[i+1]
-#         yield A
-#         partition_points[(low, high)] = i+1
+class SortingResultsIterator:
+    def __init__(self, name: str, sort_func: Callable, numbers: List[int]) -> Iterator:
+        self._name = name
+        self._generator = sort_func(numbers)
 
-#     def gen_recur(A: List[int], low, high) -> Generator:
-#         if low < high:
-#             yield from gen_partition(A, low, high)
-#             p = partition_points[((low, high))]
-#             yield from gen_recur(A, low, p-1)
-#             yield from gen_recur(A, p+1, high)
+    def __iter__(self):
+        return self
+
+    def __next__(self):
+        for numbers in self._generator:
+            if numbers is not None:
+                return numbers
+            else:
+                break
+        raise StopIteration
     
-#     # TODO: put this in a decorator to filter repeated sequences
-#     yield A
-#     unique_results = set(tuple(A))
-#     for a in gen_recur(A, 0, len(A) - 1):
-#         if tuple(a) not in unique_results:
-#             unique_results.add(tuple(a))
-#             yield a
+    def name(self) -> str:
+        return self._name
 
 
+gen_bubble_sort = partial(SortingResultsIterator, name='bubble sort', sort_func=bubble_sort)
 
 
