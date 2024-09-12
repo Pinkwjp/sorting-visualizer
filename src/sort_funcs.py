@@ -18,6 +18,7 @@ def gen_bubble_sort(A: List[int]) -> Generator:
             break
  
 
+
 def gen_insertion_sort(A: List[int]) -> Generator:
     """basic insertion sort"""
     A = list(A)
@@ -76,8 +77,7 @@ def _merge(A: List[int], B: List[int]) -> List[int]:
 
 
 
-
-def gen_merge_sort_with_more_yield(A: List[int]) -> Generator:
+def gen_merge_sort_with_more_yields(A: List[int]) -> Generator:
     """yield more partially sorted sequences"""
     A = list(A)
     sorted_A = sorted(A)
@@ -106,6 +106,7 @@ def gen_merge_sort_with_more_yield(A: List[int]) -> Generator:
                         break
             A[start:end] = partial_sequence
         sublist_length *= 2 
+    yield sorted_A
 
 
 def _merge_with_more_yield(A: List[int], B: List[int]) -> Generator:
