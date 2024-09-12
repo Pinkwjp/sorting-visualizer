@@ -97,7 +97,7 @@ def gen_merge_sort_with_more_yields(A: List[int]) -> Generator:
             partial_sequence = deepcopy(A[start:end])
             full_sequence = deepcopy(A)
 
-            for sequence in _merge_with_more_yield(sublist_1, sublist_2):
+            for sequence in _merge_with_more_yields(sublist_1, sublist_2):
                 for a, b in zip(sequence, partial_sequence):
                     if a != b:       
                         partial_sequence = sequence
@@ -109,7 +109,7 @@ def gen_merge_sort_with_more_yields(A: List[int]) -> Generator:
     yield sorted_A
 
 
-def _merge_with_more_yield(A: List[int], B: List[int]) -> Generator:
+def _merge_with_more_yields(A: List[int], B: List[int]) -> Generator:
     """merge two sorted lists, yield more partially sorted sequences"""
     # reverse from large to small for pop
     A = list(reversed(A))  
