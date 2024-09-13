@@ -1,22 +1,30 @@
 
+from functools import partial
 from copy import deepcopy
 from typing import Generator, List, Dict, Tuple, Callable, Iterator
 
 
-# def gen_bubble_sort(A: List[int]) -> Generator:
-#     A = list(A)
-#     yield A 
-#     n = len(A)
-#     swapped = False
-#     for _ in range(n-1):
-#         for i in range(n-1):
-#             if A[i] > A[i+1]:
-#                 A[i], A[i+1] = A[i+1], A[i]
-#                 yield A
-#                 swapped = True
-#         if not swapped:
-#             break
-#     yield A  # yield the sorted sequence one more time
+
+
+class SortingResultsIterator:
+    def __init__(self,*, name: str, sort_func: Callable, numbers: List[int]) -> Iterator:
+        self._name = name
+        self._generator = sort_func(numbers)
+
+    def __iter__(self):
+        return self
+
+    def __next__(self):
+        for numbers in self._generator:
+            if numbers is not None:
+                return numbers
+            else:
+                break
+        raise StopIteration
+    
+    def name(self) -> str:
+        return self._name
+
 
 
 def bubble_sort(A: List[int]) -> Generator:
@@ -32,11 +40,11 @@ def bubble_sort(A: List[int]) -> Generator:
                 swapped = True
         if not swapped:
             break
-    yield A  # yield the sorted sequence one more time
+    yield A 
 
 
-def gen_insertion_sort(A: List[int]) -> Generator:
-    """basic insertion sort"""
+
+def insertion_sort(A: List[int]) -> Generator:
     A = list(A)
     yield A 
     for i in range(1, len(A)):
@@ -45,11 +53,11 @@ def gen_insertion_sort(A: List[int]) -> Generator:
             A[j-1], A[j] = A[j], A[j-1]
             j -= 1
             yield A
-    yield A  # yield the sorted sequence one more time
+    yield 
 
 
 
-def gen_merge_sort(A: List[int]) -> Generator:
+def merge_sort(A: List[int]) -> Generator:
     A = list(A)
     n = len(A)
     yield A 
@@ -72,7 +80,7 @@ def gen_merge_sort(A: List[int]) -> Generator:
                     yield A 
                     break
         sublist_length *= 2 
-    yield A  # yield the sorted sequence one more time
+    yield A  
 
 
 def _merge(A: List[int], B: List[int]) -> List[int]:
@@ -95,7 +103,7 @@ def _merge(A: List[int], B: List[int]) -> List[int]:
 
 
 
-def gen_merge_sort_with_more_yields(A: List[int]) -> Generator:
+def merge_sort_with_more_yields(A: List[int]) -> Generator:
     """yield more partially sorted sequences"""
     A = list(A)
     sorted_A = sorted(A)
@@ -152,7 +160,7 @@ def _merge_with_more_yields(A: List[int], B: List[int]) -> Generator:
 
 
 
-def gen_quicksort(A: List[int]) -> Generator:
+def quicksort(A: List[int]) -> Generator:
     A = list(A)
     partition_points: Dict[Tuple[int, int], int] = {}
 
@@ -182,33 +190,12 @@ def gen_quicksort(A: List[int]) -> Generator:
             yield from gen_recur(A, p+1, high)
 
     yield from gen_recur(A, 0, len(A) - 1)
-    yield A  # yield the sorted sequence one more time
+    yield A  
 
 
 
-from functools import partial
-
-
-class SortingResultsIterator:
-    def __init__(self, name: str, sort_func: Callable, numbers: List[int]) -> Iterator:
-        self._name = name
-        self._generator = sort_func(numbers)
-
-    def __iter__(self):
-        return self
-
-    def __next__(self):
-        for numbers in self._generator:
-            if numbers is not None:
-                return numbers
-            else:
-                break
-        raise StopIteration
-    
-    def name(self) -> str:
-        return self._name
-
-
-gen_bubble_sort = partial(SortingResultsIterator, name='bubble sort', sort_func=bubble_sort)
-
+gen_bubble_sort = partial(SortingResultsIterator, name='Bubble Sort', sort_func=bubble_sort)
+gen_insertion_sort = partial(SortingResultsIterator, name='Insertion Sort', sort_func=insertion_sort)
+gen_merge_sort = partial(SortingResultsIterator, name='Merge Sort', sort_func=merge_sort_with_more_yields)
+gen_quick_sort = partial(SortingResultsIterator, name='Quick Sort', sort_func=quicksort)
 
