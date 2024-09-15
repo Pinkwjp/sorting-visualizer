@@ -8,7 +8,7 @@ import matplotlib.animation as animation
 
 
 
-def run_animation(*sort_functions, n_numbers = 12):
+def run_animation(*sort_functions, n_numbers = 16):
     
     # set bins and numbers
     hist_bins = list(range(n_numbers+1))  # NOTE: edges = bins + 1
