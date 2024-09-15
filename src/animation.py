@@ -1,4 +1,3 @@
-%matplotlib widget 
 
 import random
 import functools
