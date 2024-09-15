@@ -73,3 +73,4 @@ def run_animation(*sort_functions, n_numbers = 12):
                                              cache_frame_data=False)  # to suppress warning
     plt.show() 
     return func_animation  # NOTE: must keep a reference to this returned animaton to keep it alive 
+
