@@ -53,7 +53,7 @@ def insertion_sort(A: List[int]) -> Generator:
             A[j-1], A[j] = A[j], A[j-1]
             j -= 1
             yield A
-    yield 
+    yield A
 
 
 
