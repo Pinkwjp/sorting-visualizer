@@ -12,7 +12,7 @@ def run_animation(*sort_functions, n_numbers = 16):
     
     # set bins and numbers
     hist_bins = list(range(n_numbers+1))  # NOTE: edges = bins + 1
-    num_min = 40
+    num_min = 20
     num_max = 100
     numbers = [random.randint(num_min, num_max) for _ in range(n_numbers)]
 
