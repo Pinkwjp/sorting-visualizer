@@ -1,3 +1,6 @@
+# sorting functions that have been adapted to be generators to 
+# yeild all the incremental sorting results
+
 
 from functools import partial
 from copy import deepcopy
@@ -7,6 +10,7 @@ from typing import Generator, List, Dict, Tuple, Callable, Iterator
 
 
 class SortingResultsIterator:
+    """a helper class that wraps around the sorting function (generator)"""
     def __init__(self,*, name: str, sort_func: Callable, numbers: List[int]) -> Iterator:
         self._name = name
         self._generator = sort_func(numbers)
